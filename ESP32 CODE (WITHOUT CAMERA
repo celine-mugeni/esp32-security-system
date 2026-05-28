@@ -1,0 +1,94 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+
+const char* ssid = "ednet";
+const char* password = "ckc,z";
+
+String serverName =
+"http://YOUR_IP/security_system/data.php";
+
+#define TRIG_PIN 12
+#define ECHO_PIN 13
+
+void setup() {
+
+  Serial.begin(115200);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+
+  WiFi.begin(ssid, password);
+
+  Serial.print("Connecting");
+
+  while(WiFi.status() != WL_CONNECTED){
+
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi Connected");
+}
+
+float getDistance(){
+
+  long duration;
+  float distance;
+
+
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(TRIG_PIN, LOW);
+
+
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+
+  distance = duration * 0.034 / 2;
+
+  return distance;
+}
+
+void sendData(float distance){
+
+  HTTPClient http;
+
+  String url =
+  serverName + "?distance=" + String(distance);
+
+  http.begin(url);
+
+  int responseCode = http.GET();
+
+  Serial.print("Response: ");
+  Serial.println(responseCode);
+
+  http.end();
+}
+
+void loop() {
+
+  float distance = getDistance();
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if(distance < 20){
+
+    Serial.println("INTRUSION DETECTED!");
+
+    sendData(distance);
+
+    delay(5000);
+  }
+
+  delay(1000);
+}
