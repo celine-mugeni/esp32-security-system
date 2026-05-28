@@ -1,0 +1,28 @@
+<?php
+
+$conn = mysqli_connect(
+    "localhost",
+    "root",
+    "",
+    "security_system"
+);
+
+
+$distance = $_SERVER['HTTP_DISTANCE'];
+$imageName = time() . ".jpg";
+
+file_put_contents(
+    "uploads/" . $imageName,
+    file_get_contents("php://input")
+);
+
+
+mysqli_query(
+    $conn,
+    "INSERT INTO intrusions(image, distance)
+    VALUES('$imageName', '$distance')"
+);
+
+echo "Uploaded";
+
+?>
