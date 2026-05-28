@@ -22,16 +22,16 @@ void sendSMS() {
   gsm.println("AT");
   delay(1000);
 
-  gsm.println("AT+CMGF=1"); // TEXT MODE
+  gsm.println("AT+CMGF=1"); 
   delay(1000);
 
-  gsm.println("AT+CMGS=\"+2507XXXXXXXX\""); // YOUR NUMBER
+  gsm.println("AT+CMGS=\"+250798481003\""); 
   delay(1000);
 
   gsm.print("Hello! Motion detected on ESP32 security system");
   delay(1000);
 
-  gsm.write(26); // CTRL+Z TO SEND
+  gsm.write(26);
 
   delay(5000);
 
